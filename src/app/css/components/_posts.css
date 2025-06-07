@@ -1,0 +1,29 @@
+/* Основной контейнер */
+.containerPosts {
+  @apply flex flex-col;
+}
+
+/* Блок сортировки (выравнивание вправо) */
+.containerPosts > .sortOption {
+  @apply my-[15px] ml-auto w-[200px];
+  right: 0;
+}
+
+/* Обертка пагинации */
+.containerPosts > .page__wrapper {
+  @apply flex;
+}
+
+/* Кнопки пагинации */
+.containerPosts > .page__wrapper > .navigation-pages {
+  @apply mr-[5px] p-[5px] border border-[var('border-greenyellow')] rounded-[5px] cursor-pointer;
+}
+
+/* Активная страница */
+.containerPosts > .page__wrapper > .carrent-page {
+  @apply border-[3px] border-[var('border-greenyellow')];
+}
+
+.post-container {
+  @apply border-2 border-[var('border-greenyellow')] rounded-[10px] p-[10px] flex-grow;
+}

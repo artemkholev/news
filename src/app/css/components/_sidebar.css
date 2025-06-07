@@ -1,0 +1,26 @@
+/* Анимационные классы */
+.slide-enter-active,
+.slide-leave-active {
+  @apply transition-transform duration-200 ease-out;
+}
+
+.slide-enter,
+.slide-leave-to {
+  @apply transform -translate-x-full transition-all duration-150 ease-in;
+}
+
+/* Фон сайдбара */
+.sidebar-backdrop {
+  @apply w-full h-full fixed top-0 left-0 cursor-pointer;
+  background-color: rgba(107, 107, 107, 0.4);
+}
+
+/* Панель сайдбара */
+.sidebar {
+  @apply z-[1000];
+}
+
+.sidebar-panel {
+  @apply overflow-y-auto fixed bg-[#c3cfe2] left-0 top-0 h-full w-[250px];
+  padding: 3rem 40px 2rem 40px;
+}

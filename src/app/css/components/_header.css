@@ -1,0 +1,151 @@
+.header {
+  @apply flex py-5 px-[50px] justify-between items-center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  @apply sticky top-0 z-50;
+  transition: all 0.3s ease;
+}
+
+.header a {
+  @apply text-black no-underline;
+}
+
+.header > .logo {
+  @apply flex items-center gap-3;
+  perspective: 500px;
+}
+
+.logo-text {
+  @apply text-[1.8rem] font-extrabold;
+  background: linear-gradient(90deg, #ff8a00, #e52e71, #5f2c82);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: liquid 8s ease-in-out infinite;
+  background-size: 300% 300%;
+  transition: transform 0.5s;
+}
+
+@keyframes liquid {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.header > .links {
+  @apply flex justify-end items-center gap-6 h-full self-stretch;
+}
+
+.header > .links > a {
+  @apply relative px-3 py-2 rounded-[20px];
+  transition: all 0.4s;
+}
+
+.header > .links > a:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header > .links > a::before {
+  content: "";
+  @apply absolute bottom-0 left-1/2 h-[2px];
+  transform: translateX(-50%);
+  width: 0;
+  background: linear-gradient(90deg, #ff8a00, #e52e71);
+  transition: width 0.3s;
+}
+
+.header > .links > a:hover::before {
+  width: 70%;
+}
+
+.header > .links > a > p {
+  @apply text-center font-normal leading-[150%];
+}
+
+.burger {
+  @apply w-[30px] h-[20px] relative cursor-pointer hidden;
+}
+
+.burger span {
+  @apply absolute h-[2px] w-full;
+  background: linear-gradient(90deg, #ff8a00, #e52e71);
+  transition: all 0.3s;
+}
+
+.burger span:nth-child(1) {
+  @apply top-0;
+}
+.burger span:nth-child(2) {
+  @apply top-1/2 -translate-y-1/2;
+}
+.burger span:nth-child(3) {
+  @apply bottom-0;
+}
+
+.burger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.burger.active span:nth-child(2) {
+  opacity: 0;
+}
+.burger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+.mobile-menu {
+  @apply fixed top-0 left-0 w-full h-full bg-white z-50 hidden pt-[100px];
+  animation: fadeIn 0.3s;
+}
+
+.mobile-menu.active {
+  @apply block;
+}
+
+.mobile-menu a {
+  @apply block text-center py-4 text-[1.25rem] text-black no-underline;
+  transition: all 0.3s;
+}
+
+.mobile-menu a:hover {
+  color: #e52e71;
+  transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1000px) {
+  .header .links {
+    display: none;
+  }
+
+  .burger {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    @apply py-4 px-6;
+  }
+
+  .logo-text {
+    @apply text-[1.5rem];
+  }
+}

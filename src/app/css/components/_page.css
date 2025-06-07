@@ -1,0 +1,23 @@
+/* Основной контейнер страницы */
+.page {
+  @apply h-full w-full flex items-center flex-col;
+}
+
+/* Внутренний контейнер с адаптивным шрифтом */
+.page__container {
+  @apply flex flex-col items-center flex-grow font-black;
+  font-size: calc(18px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
+}
+
+/* Опциональные медиа-запросы для контроля */
+@media (min-width: 1920px) {
+  .page__container {
+    @apply text-[16px];
+  }
+}
+
+@media (max-width: 320px) {
+  .page__container {
+    @apply text-[14px];
+  }
+}

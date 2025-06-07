@@ -1,0 +1,135 @@
+.content-layout {
+  @apply flex h-full bg-gray-50;
+}
+
+/* Sidebar - полная переработка */
+.sidebar {
+  @apply w-72 bg-white shadow-xl fixed h-full border-r border-gray-200 p-6;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-title {
+  @apply text-xl font-semibold mb-8 text-gray-800 flex items-center justify-start;
+}
+
+.sidebar-title::before {
+  content: "";
+  @apply block w-2 h-6 bg-gradient-to-b from-green-400 to-blue-500 rounded-full mr-3;
+}
+
+.sidebar-nav {
+  @apply space-y-1;
+}
+
+.sidebar-link {
+  @apply flex items-center px-4 py-3 rounded-xl text-gray-600 no-underline;
+  transition: all 0.3s ease;
+}
+
+.sidebar-link:hover {
+  @apply bg-gray-100 text-gray-900;
+  transform: translateX(4px);
+}
+
+.sidebar-link.active {
+  @apply bg-gradient-to-r from-green-50 to-blue-50 text-blue-600 border-l-4 border-blue-500;
+}
+
+.sidebar-link-icon {
+  @apply text-lg mr-3 w-6 text-center;
+  transition: all 0.3s ease;
+}
+
+.sidebar-link:hover .sidebar-link-icon {
+  @apply text-blue-500;
+  transform: scale(1.1);
+}
+
+.sidebar-link-text {
+  @apply flex-1 text-base font-medium;
+}
+
+.sidebar-link-arrow {
+  @apply text-gray-400 text-sm;
+  transition: all 0.3s ease;
+}
+
+.sidebar-link:hover .sidebar-link-arrow {
+  @apply text-blue-500;
+  transform: translateX(3px);
+}
+
+/* Основной контент */
+.content {
+  @apply flex-1 p-8;
+  min-height: 100vh;
+  transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.breadcrumbs {
+  @apply mb-8 flex items-center text-sm text-gray-500;
+}
+
+.content-children {
+  @apply h-full bg-white rounded-2xl shadow-sm p-8 border border-gray-100;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Анимации */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Микро-интеракции */
+.content-children:hover {
+  @apply shadow-md;
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* Адаптивность с плавными переходами */
+@media (max-width: 1200px) {
+  .sidebar {
+    @apply w-64;
+  }
+  .content {
+    @apply ml-64;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    @apply w-60 shadow-lg;
+  }
+  .sidebar.active {
+    @apply translate-x-0;
+  }
+  .content {
+    @apply ml-0;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    @apply p-6;
+  }
+  .content-children {
+    @apply p-6 rounded-xl;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    @apply p-4;
+  }
+  .content-children {
+    @apply p-4 rounded-lg;
+  }
+}

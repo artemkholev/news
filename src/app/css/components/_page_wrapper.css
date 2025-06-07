@@ -1,0 +1,26 @@
+.page_wrapper {
+  @apply grid w-full h-full;
+  grid-template-areas:
+    "header"
+    "content"
+    "footer";
+  grid-template-rows: 100px auto 400px;
+}
+
+@media (max-width: 1000px) {
+  .page_wrapper {
+    grid-template-rows: 100px auto 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page_wrapper {
+    grid-template-rows: 100px auto 450px;
+  }
+}
+
+@media (max-width: 400px) {
+  .page_wrapper {
+    grid-template-rows: 100px auto 450px;
+  }
+}

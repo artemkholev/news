@@ -1,0 +1,11 @@
+.breadcrumbs-wrapper {
+  @apply flex text-black;
+}
+
+.breadcrumbs-wrapper a {
+  @apply no-underline text-black;
+}
+
+.breadcrumbs-wrapper > .breadcrumbs > .lastTitle {
+  @apply border-b border-black;
+}
