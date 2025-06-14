@@ -1,10 +1,8 @@
 import React from 'react';
-import { SidebarProvider } from '@/shared/ui';
 
 type TProvider = React.FC<{ children: React.ReactNode }>;
 
 const providerList: TProvider[] = [
-  SidebarProvider,
   // ... другие провайдеры
 ];
 

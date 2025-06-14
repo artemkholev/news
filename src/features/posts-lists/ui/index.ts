@@ -1,3 +1,3 @@
-import { PostsList } from "./PostsLists";
+import { NewsList } from "./NewsLists";
 
-export { PostsList };
+export { NewsList };

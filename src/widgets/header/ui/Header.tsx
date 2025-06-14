@@ -1,34 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Burger } from "@/shared/ui";
 
 const Header: React.FC = () => {
   return (
     <header className="header">
       <Link to="/" className="logo group">
-        <svg
-          width="32"
-          height="32"
-          viewBox="0 0 32 32"
-          className="transition-transform duration-300 group-hover:rotate-12"
-        >
-          <path
-            d="M16 0C7.163 0 0 7.163 0 16C0 24.837 7.163 32 16 32C24.837 32 32 24.837 32 16C32 7.163 24.837 0 16 0Z"
-            fill="url(#logoGradient)"
-          />
-          <path
-            d="M22 16C22 19.314 19.314 22 16 22C12.686 22 10 19.314 10 16C10 12.686 12.686 10 16 10C19.314 10 22 12.686 22 16Z"
-            fill="white"
-          />
-          <defs>
-            <linearGradient id="logoGradient" x1="0" y1="0" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FF8A00" />
-              <stop offset="50%" stopColor="#E52E71" />
-              <stop offset="100%" stopColor="#5F2C82" />
-            </linearGradient>
-          </defs>
-        </svg>
-        <span className="logo-text">NuslyAR</span>
+        <span className="logo-text">News for everyone</span>
       </Link>
 
       <Link
@@ -53,7 +30,6 @@ const Header: React.FC = () => {
         </p>
       </Link>
 
-      <Burger className="burger hover:scale-110 transition-transform" />
     </header>
   );
 };
