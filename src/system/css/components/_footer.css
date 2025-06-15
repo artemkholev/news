@@ -1,59 +1,16 @@
 .footer {
-  @apply h-[240px] px-[105px] py-[32px];
-
+  @apply h-[240px] bg-base-4 px-[105px] py-[32px];
 }
 
-.footer-info {
-  @apply flex gap-12 mb-6 flex-wrap justify-center;
-}
-
-.footer-links,
-.footer__contacts {
-  @apply flex flex-col min-w-[200px];
-}
-
-.footer-links a,
-.footer__contacts p {
-  @apply py-1 transition-all duration-200;
-}
-
-.footer__name-company {
-  @apply text-xs text-center mt-8 opacity-70;
-  transition: all 0.3s ease;
+.footer__container {
+  @apply flex flex-row justify-between text-white;
 }
 
 @media (max-width: 1000px) {
-  .footer-info {
-    @apply gap-8 mb-8;
-  }
-
-  .footer-links,
-  .footer__contacts {
-    @apply min-w-[160px];
-  }
 }
 
 @media (max-width: 768px) {
-  .footer {
-    @apply py-8;
-  }
-
-  .footer-info {
-    @apply flex-col items-center text-center gap-6 mb-6;
-  }
-
-  .footer-links,
-  .footer__contacts {
-    @apply items-center;
-  }
 }
 
 @media (max-width: 400px) {
-  .footer {
-    @apply px-2;
-  }
-
-  .footer__name-company {
-    @apply text-[0.7rem];
-  }
 }
