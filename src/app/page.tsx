@@ -1,7 +1,8 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiPenTool, FiTrendingUp, FiUsers, FiArrowRight } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const HomePage: React.FC = () => {
   const [activeFeature, setActiveFeature] = useState(0);
@@ -36,7 +37,7 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 bg-red-500">
       {/* Hero секция */}
       <div className="container mx-auto px-4 py-20 text-center">
         <motion.h1
@@ -96,7 +97,7 @@ const HomePage: React.FC = () => {
           className="inline-block"
         >
           <Link
-            to="/posts"
+            href="/posts"
             className="inline-flex relative overflow-hidden px-8 py-4 rounded-full text-lg shadow-lg"
             style={{
               background: "linear-gradient(90deg, #ff8a00, #e52e71)",

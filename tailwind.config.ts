@@ -1,9 +1,16 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import type { Config } from "tailwindcss";
+
+type PluginUtils = {
+  addUtilities: (
+    utilities: Record<string, Record<string, string>>,
+    variants?: string[]
+  ) => void;
+  theme: (path: string) => unknown;
+};
+
+const config: Config = {
   content: [
-    "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    // FSD paths
     "./src/app/**/*.{js,ts,jsx,tsx}",
     "./src/widgets/**/*.{js,ts,jsx,tsx}",
     "./src/features/**/*.{js,ts,jsx,tsx}",
@@ -52,70 +59,114 @@ module.exports = {
         },
       },
     },
-    typographyUtilities: (theme: (path: string) => string) => ({
-      // web
-      ".web__h1": {
-        fontFamily: "Inter",
-        fontWeight: "500",
-        fontSize: "40px",
-        lineHeight: "50px",
-      },
-      ".web__h2": {
-        fontFamily: "Inter",
-        fontWeight: "500",
-        fontSize: "24px",
-        lineHeight: "32px",
-      },
-      ".web__h3": {
-        fontFamily: "Inter",
-        fontWeight: "500",
-        fontSize: "20px",
-        lineHeight: "28px",
-      },
-      ".web__body": {
-        fontFamily: "Inter",
-        fontWeight: "400",
-        fontSize: "16px",
-        lineHeight: "24px",
-      },
-      ".web__caption": {
-        fontFamily: "Inter",
-        fontWeight: "300",
-        fontSize: "14px",
-        lineHeight: "20px",
-      },
-      // mobile
-      ".mobile__h1": {
-        fontFamily: "Inter",
-        fontWeight: "500",
-        fontSize: "28px",
-        lineHeight: "36px",
-      },
-      ".mobile__h2": {
-        fontFamily: "Inter",
-        fontWeight: "500",
-        fontSize: "22px",
-        lineHeight: "30px",
-      },
-      ".mobile__h3": {
-        fontFamily: "Inter",
-        fontWeight: "500",
-        fontSize: "18px",
-        lineHeight: "26px",
-      },
-      ".mobile__body": {
-        fontFamily: "Inter",
-        fontWeight: "400",
-        fontSize: "14px",
-        lineHeight: "20px",
-      },
-      ".mobile__caption": {
-        fontFamily: "Inter",
-        fontWeight: "300",
-        fontSize: "12px",
-        lineHeight: "18px",
-      },
-    }),
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities, theme }: PluginUtils) {
+      // Тип для типографических утилит
+      type TypographyUtility = {
+        fontFamily: string;
+        fontWeight: string;
+        fontSize: string;
+        lineHeight: string;
+      };
+
+      // Тип для цветовых утилит
+      type ColorUtility = {
+        backgroundColor?: string;
+        color?: string;
+        borderColor?: string;
+      };
+
+      // Добавляем типографические утилиты
+      const typographyUtilities: Record<string, TypographyUtility> = {
+        ".web__h1": {
+          fontFamily: "Inter",
+          fontWeight: "500",
+          fontSize: "40px",
+          lineHeight: "50px",
+        },
+        ".web__h2": {
+          fontFamily: "Inter",
+          fontWeight: "500",
+          fontSize: "24px",
+          lineHeight: "32px",
+        },
+        ".web__h3": {
+          fontFamily: "Inter",
+          fontWeight: "500",
+          fontSize: "20px",
+          lineHeight: "28px",
+        },
+        ".web__body": {
+          fontFamily: "Inter",
+          fontWeight: "400",
+          fontSize: "16px",
+          lineHeight: "24px",
+        },
+        ".web__caption": {
+          fontFamily: "Inter",
+          fontWeight: "300",
+          fontSize: "14px",
+          lineHeight: "20px",
+        },
+        ".mobile__h1": {
+          fontFamily: "Inter",
+          fontWeight: "500",
+          fontSize: "28px",
+          lineHeight: "36px",
+        },
+        ".mobile__h2": {
+          fontFamily: "Inter",
+          fontWeight: "500",
+          fontSize: "22px",
+          lineHeight: "30px",
+        },
+        ".mobile__h3": {
+          fontFamily: "Inter",
+          fontWeight: "500",
+          fontSize: "18px",
+          lineHeight: "26px",
+        },
+        ".mobile__body": {
+          fontFamily: "Inter",
+          fontWeight: "400",
+          fontSize: "14px",
+          lineHeight: "20px",
+        },
+        ".mobile__caption": {
+          fontFamily: "Inter",
+          fontWeight: "300",
+          fontSize: "12px",
+          lineHeight: "18px",
+        },
+      };
+
+      addUtilities(typographyUtilities);
+
+      // Явно создаем классы для ваших цветов
+      const colorUtilities: Record<string, ColorUtility> = {};
+      const colors = theme("colors") as Record<string, Record<string, string>>;
+
+      const createColorUtilities = (
+        prefix: string,
+        property: keyof ColorUtility
+      ) => {
+        Object.entries(colors).forEach(([colorName, shades]) => {
+          Object.entries(shades).forEach(([shade, value]) => {
+            colorUtilities[`.${prefix}-${colorName}-${shade}`] = {
+              [property]: value,
+            };
+          });
+        });
+      };
+
+      createColorUtilities("bg", "backgroundColor");
+      createColorUtilities("text", "color");
+      createColorUtilities("border", "borderColor");
+
+      addUtilities(colorUtilities, ["responsive", "hover", "focus"]);
+    },
+  ],
 };
+
+export default config;

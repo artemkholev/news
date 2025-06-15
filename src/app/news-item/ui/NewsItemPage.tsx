@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useParams } from "react-router-dom";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import {
   FiUser,
   FiMail,
@@ -13,7 +14,9 @@ import { useNews } from "@/entities/news";
 import { Button } from "@/shared/ui";
 
 const NewsItemPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const { id } = router.query; // Получаем параметр из URL
+
   const { post, author, isLoading, isError, getPost, getInfoAboutAuthor } =
     useNews();
 
@@ -21,7 +24,7 @@ const NewsItemPage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      getPost(id);
+      getPost(id as string);
     }
   }, [id, getPost]);
 
@@ -85,7 +88,11 @@ const NewsItemPage: React.FC = () => {
         <p className="text-gray-600 mb-6">
           Не удалось загрузить пост. Пожалуйста, попробуйте позже.
         </p>
-        <Button onClick={() => id && getPost(id)} variant="gradient" size="lg">
+        <Button
+          onClick={() => id && getPost(id as string)}
+          variant="gradient"
+          size="lg"
+        >
           Попробовать снова
         </Button>
       </motion.div>
@@ -106,9 +113,11 @@ const NewsItemPage: React.FC = () => {
         <p className="text-gray-500 mb-6">
           Похоже, такого поста не существует или он был удален.
         </p>
-        <Button to="/posts" variant="outline" size="lg">
-          Вернуться к списку постов
-        </Button>
+        <Link href="/posts" passHref>
+          <Button variant="outline" size="lg">
+            Вернуться к списку постов
+          </Button>
+        </Link>
       </motion.div>
     );
   }
@@ -121,7 +130,7 @@ const NewsItemPage: React.FC = () => {
       className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8"
     >
       <motion.div whileHover={{ x: -3 }}>
-        <Link to="/posts">
+        <Link href="/posts" passHref>
           <Button variant="ghost" className="mb-8 flex items-center">
             <FiArrowLeft className="mr-2" />
             Назад к постам

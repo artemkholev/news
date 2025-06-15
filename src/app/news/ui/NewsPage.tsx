@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useRouter } from "next/router";
 import { NewsList } from "@/features/posts-lists";
-import { Select } from "@/shared/ui";
 import { useNews } from "@/entities/news";
 import { FiRefreshCw, FiArrowLeft } from "react-icons/fi";
 
 const NewsPage = () => {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const router = useRouter();
+  const { page: urlPage = "1", sort: urlSort } = router.query;
 
   const {
     isLoading,
@@ -35,29 +34,31 @@ const NewsPage = () => {
 
   // Инициализация из URL при первом рендере
   useEffect(() => {
-    const urlPage = Number(searchParams.get("page")) || 1;
-    const urlSort = searchParams.get("sort") || selectOptions[0]?.value;
+    const initialPage = Number(urlPage) || 1;
+    const initialSort = (urlSort as string) || selectOptions[0]?.value;
 
-    if (urlPage !== page) setPage(urlPage);
-    if (urlSort && urlSort !== selected) setSelected(urlSort);
-  }, []); // Только при монтировании
+    if (initialPage !== page) setPage(initialPage);
+    if (initialSort && initialSort !== selected) setSelected(initialSort);
+  }, []);
 
   // Синхронизация URL с состоянием при изменении page/selected
   useEffect(() => {
-    const params = new URLSearchParams();
-    params.set("page", page.toString());
-    params.set("sort", selected);
-    navigate(`?${params.toString()}`, { replace: true });
+    router.replace(
+      {
+        query: { ...router.query, page, sort: selected },
+      },
+      undefined,
+      { shallow: true }
+    );
 
-    // Загружаем новые данные при изменении
     getPosts();
-  }, [page]); // Только эти зависимости
+  }, [page, selected]);
 
   return (
     <>
       {/* Кнопка назад для мобильных устройств */}
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => router.back()}
         className="md:hidden flex items-center mb-6 text-gray-600 hover:text-gray-900"
       >
         <FiArrowLeft className="mr-2" />
@@ -140,19 +141,11 @@ const NewsPage = () => {
         Исследуйте Посты
       </h1>
 
-      <div className="sortOption mb-8 ml-auto">
-        <Select
-          value={selected}
-          onChange={setSelected}
-          options={selectOptions}
-        />
-      </div>
-
       {isError && (
         <div className="p-4 rounded-lg bg-red-50 text-red-600 mb-8">
           Ошибка загрузки. Пожалуйста, попробуйте перезагрузить страницу. (Если
-          списки постов не подгрузились пробема на стороне сервака, откуда беру
-          данные, презагрузка страницы должна решить проблему) -
+          списки постов не подгрузились проблема на стороне сервера, откуда беру
+          данные, перезагрузка страницы должна решить проблему) -
           https://jsonplaceholder.typicode.com/
         </div>
       )}

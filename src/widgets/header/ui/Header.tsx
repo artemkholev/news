@@ -1,15 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const Header: React.FC = () => {
   return (
     <header className="header">
-      <Link to="/" className="logo group">
+      <Link href="/" className="logo group">
         <span className="logo-text">News for everyone</span>
       </Link>
 
       <Link
-        to="/posts"
+        href="/posts"
         className="general-info group hover:bg-opacity-10 hover:bg-white transition-all duration-300 px-4 py-2 rounded-lg flex flex-col items-center"
       >
         <svg

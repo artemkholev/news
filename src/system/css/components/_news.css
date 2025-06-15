@@ -16,14 +16,14 @@
 
 /* Кнопки пагинации */
 .containerPosts > .page__wrapper > .navigation-pages {
-  @apply mr-[5px] p-[5px] border border-[var('border-greenyellow')] rounded-[5px] cursor-pointer;
+  @apply mr-[5px] p-[5px] border rounded-[5px] cursor-pointer;
 }
 
 /* Активная страница */
 .containerPosts > .page__wrapper > .carrent-page {
-  @apply border-[3px] border-[var('border-greenyellow')];
+  @apply border-[3px] ;
 }
 
 .post-container {
-  @apply border-2 border-[var('border-greenyellow')] rounded-[10px] p-[10px] flex-grow;
+  @apply border-2 rounded-[10px] p-[10px] flex-grow;
 }

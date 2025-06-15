@@ -5,5 +5,5 @@
 }
 
 .button:hover {
-  @apply bg-[#7ab942] text-black !important;
+  @apply bg-[#7ab942] text-black;
 }

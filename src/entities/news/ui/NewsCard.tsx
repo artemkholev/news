@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useRouter } from "next/router";
 import { AppRoutes } from "@/app/router/router.options";
 import type { IPost } from "../lib";
 
@@ -10,13 +10,12 @@ interface PostItemProps {
 }
 
 export const NewsCard: React.FC<PostItemProps> = ({ post, removePost }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
 
   const handleLeftClick = () => {
-    navigate({
+    router.push({
       pathname: AppRoutes.NEWS_ITEM.replace(":id", post.id.toString()),
-      search: location.search,
+      query: router.query,
     });
   };
 

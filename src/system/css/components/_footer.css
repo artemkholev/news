@@ -1,12 +1,6 @@
 .footer {
-  @apply h-[400px] flex flex-col items-center justify-center px-4;
-  background: linear-gradient(
-    to bottom,
-    rgba(245, 247, 250, 0.8) 0%,
-    rgba(195, 207, 226, 0.9) 100%
-  );
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
+  @apply h-[240px] px-[105px] py-[32px];
+
 }
 
 .footer-info {
