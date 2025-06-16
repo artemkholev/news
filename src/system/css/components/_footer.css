@@ -1,9 +1,9 @@
 .footer {
-  @apply h-[240px] bg-base-4 px-[105px] py-[32px];
+  @apply h-[240px] w-full flex justify-center bg-base-4;
 }
 
 .footer__container {
-  @apply flex flex-row justify-between text-white;
+  @apply w-[1250px] flex flex-row justify-between text-white px-[105px] py-[32px];
 }
 
 @media (max-width: 1000px) {
