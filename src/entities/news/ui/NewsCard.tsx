@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
-import { AppRoutes } from "@/app/router/router.options";
+import { AppRoutes } from "@/shared/router/router.options";
 import type { IPost } from "../lib";
 
 interface PostItemProps {

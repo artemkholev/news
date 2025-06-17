@@ -3,7 +3,7 @@
 }
 
 .header__container {
-  @apply w-[1250px] flex flex-row justify-between p-8
+  @apply relative w-[1250px] flex flex-row justify-between p-8
 }
 
 @media (max-width: 1000px) {

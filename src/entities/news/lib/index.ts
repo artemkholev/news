@@ -1,2 +1,2 @@
-export * from "./authorApi.types";
-export * from "./newsApi.types";
+export * from "./types";
+export * from "./constants";

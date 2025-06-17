@@ -3,4 +3,6 @@ export enum AppRoutes {
   AUTH_LOGIN = "/auth/login",
   NEWS = "/news",
   NEWS_ITEM = "/news/:id",
+  ABOUT = "/about",
+  CONTACTS = "/contacts"
 }

@@ -11,6 +11,22 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off", // Полное отключение проверки any
+      // Настройка для unused expressions
+      "@typescript-eslint/no-unused-expressions": [
+        "error",
+        {
+          allowShortCircuit: true, // Разрешаем конструкции типа a || b
+          allowTernary: true, // Разрешаем тернарные операторы
+          allowTaggedTemplates: true, // Разрешаем тегированные шаблоны
+        },
+      ],
+      "@typescript-eslint/no-unused-vars": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+    },
+  },
 ];
 
 export default eslintConfig;

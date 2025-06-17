@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { setToken, getToken, removeToken } from "@/shared/lib/auth";
 
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 const baseApi = axios.create({
   baseURL: baseURL,

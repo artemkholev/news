@@ -1,10 +1,18 @@
 import React from "react";
-import { BasicButton } from "@/shared/ui";
+import { usePathname } from "next/navigation";
+import { BasicButton, TabsComponent } from "@/shared/ui";
 import { AppRoutes } from "@/shared/router/router.options";
-import Stack from "@mui/material/Stack";
 import Link from "next/link";
 
 const Header: React.FC = () => {
+  const pathname = usePathname();
+
+  const tabsData = [
+    { label: "Главная", href: AppRoutes.HOME },
+    { label: "О нас", href: AppRoutes.ABOUT },
+    { label: "Контакты", href: AppRoutes.CONTACTS },
+  ];
+
   return (
     <header className="header">
       <div className="header__container">
@@ -12,11 +20,9 @@ const Header: React.FC = () => {
           <span className="typography__h2 text-blue-7">News for everyone</span>
         </Link>
 
-        <Stack direction="row" spacing={3}>
-          <BasicButton>Главная</BasicButton>
-          <BasicButton>Контакты</BasicButton>
-          <BasicButton>О нас</BasicButton>
-        </Stack>
+        <div className="absolute w-full flex justify-center">
+          <TabsComponent items={tabsData} activeTab={pathname} />
+        </div>
 
         <Link href={AppRoutes.AUTH_LOGIN}>
           <BasicButton>Админ</BasicButton>
