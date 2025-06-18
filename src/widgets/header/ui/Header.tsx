@@ -20,7 +20,7 @@ const Header: React.FC = () => {
           <span className="typography__h2 text-blue-7">News for everyone</span>
         </Link>
 
-        <div className="absolute w-full flex justify-center">
+        <div className="absolute left-1/2 transform -translate-x-1/2">
           <TabsComponent items={tabsData} activeTab={pathname} />
         </div>
 

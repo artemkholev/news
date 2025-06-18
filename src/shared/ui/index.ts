@@ -1,4 +1,5 @@
 import BasicButton from "./Button";
 import TabsComponent from "./TabsComponent";
+import InputText from "./InputText";
 
-export { BasicButton, TabsComponent };
+export { BasicButton, InputText, TabsComponent };
