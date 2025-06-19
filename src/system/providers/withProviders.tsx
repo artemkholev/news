@@ -1,8 +1,10 @@
 import React from "react";
+import StoreProvider from "./StoreProvider";
 
 type ProviderComponent = React.FC<{ children: React.ReactNode }>;
 
 const providerList: ProviderComponent[] = [
+  StoreProvider,
   // ... другие провайдеры
 ];
 

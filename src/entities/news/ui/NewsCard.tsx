@@ -4,8 +4,8 @@ import Image from "next/image";
 
 const NewsCard = () => {
   return (
-    <div className="w-[370px] h-[450px] p-2 bg-white hover:bg-blue-700 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
-      <div className="h-48 bg-gray-200 relative">
+    <div className="w-[370px] h-[450px] p-2 bg-base-1 hover:bg-blue-700 rounded-xl overflow-hidden hover:shadow-lg duration-300 group">
+      <div className="h-48 bg-gray-200 relative rounded-xl">
         <Image
           src="/placeholder-kittens.jpg"
           alt="Котята обворовывают бабушек"

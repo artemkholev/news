@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { registerRequest, loginRequest, logoutRequest, refreshTokenRequest } from "../api";
-import { RootState, AppDispatch } from "@/app/store";
+import { RootState, AppDispatch } from "@/system/store";
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();

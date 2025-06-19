@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUser } from "../api";
-import { RootState, AppDispatch } from "@/app/store";
+import { RootState, AppDispatch } from "@/system/store";
 import { clearUser } from "../model";
 
 export const useUser = () => {
