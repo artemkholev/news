@@ -9,6 +9,8 @@ interface CustomInputProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: boolean;
   helperText?: string;
+  name?: string;
+  type?: string;
 }
 
 const StyledInput = styled(TextField)`
@@ -20,7 +22,6 @@ const StyledInput = styled(TextField)`
     font-size: 16px;
 
     &:hover {
-      
     }
 
     &.Mui-focused {
@@ -28,7 +29,7 @@ const StyledInput = styled(TextField)`
   }
 
   & .MuiOutlinedInput-notchedOutline {
-    border-color: #D4D4D4;
+    border-color: #d4d4d4;
   }
 
   & .Mui-focused .MuiOutlinedInput-notchedOutline {
@@ -49,9 +50,13 @@ const InputText: React.FC<CustomInputProps> = ({
   onChange,
   error,
   helperText,
+  name,
+  type = "text", // Значение по умолчанию
 }) => {
   return (
     <StyledInput
+      name={name} // Передаем name
+      type={type} // Передаем type
       label={label}
       variant="outlined"
       placeholder={placeholder}

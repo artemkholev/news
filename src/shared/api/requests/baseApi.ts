@@ -9,6 +9,7 @@ const baseApi = axios.create({
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
+    Accept: "application/json",
   },
   timeout: 7000,
 });
