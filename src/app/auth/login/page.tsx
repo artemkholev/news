@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { BasicButton, InputText } from "@/shared/ui";
 import { useAuth } from "@/features/auth";

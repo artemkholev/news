@@ -1,58 +1,288 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BasicButton } from "@/shared/ui";
+import Dialog from "@mui/material/Dialog";
 import { NewsCard } from "@/entities/news";
+import { useAuth } from "@/features/auth";
+import { useNews } from "@/entities/news/model/hooks";
+import { Skeleton } from "@mui/material";
+import { toast } from "react-toastify";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import { AddNewsForm, EditNewsForm } from "@/widgets/news";
+import { motion, AnimatePresence } from "framer-motion";
+
+enum newsActions {
+  CREATE = "create",
+  EDIT = "edit",
+}
+
+export const NEWS_DIALOG_COMPONENTS = {
+  [newsActions.CREATE]: AddNewsForm,
+  [newsActions.EDIT]: EditNewsForm,
+} as const;
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
+
+const buttonGroupVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const buttonVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+    },
+  },
+};
 
 const HomePage: React.FC = () => {
-  const isAdmin = true;
+  const { accessToken } = useAuth();
+  const {
+    isLoading,
+    isError,
+    posts,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    fetchPosts,
+    deletePost,
+  } = useNews();
 
-  const news = [
-    { id: 1, title: "Новость 1", content: "Содержание новости 1" },
-    { id: 2, title: "Новость 2", content: "Содержание новости 2" },
-    { id: 3, title: "Новость 3", content: "Содержание новости 3" },
-    { id: 4, title: "Новость 4", content: "Содержание новости 4" },
-    { id: 5, title: "Новость 5", content: "Содержание новости 5" },
-    { id: 6, title: "Новость 6", content: "Содержание новости 6" },
-  ];
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [currentAction, setCurrentAction] = useState<newsActions | null>(null);
 
-  return (
-    <div className="h-full flex flex-col gap-8 items-center">
-      <h1 className="typography__h1 ">
-        {" "}
-        {isAdmin ? "Список новостей" : "Последние новости"}
-      </h1>
-      <div className="h-full">
-        {/* Сетка новостей */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
-          {news.map((item) => (
-            <div className="flex flex-col gap-5" key={item.id}>
-              <NewsCard />
-              {isAdmin && (
-                <div className="flex flex-row gap-4">
-                  <BasicButton className="w-full">Редактировать</BasicButton>
-                  <BasicButton
-                    className="w-full"
-                    sx={{
-                      color: "#DC2626",
-                      backgroundColor: "transparent",
-                      border: "1px solid #DC2626",
-                      "&:hover": {
-                        backgroundColor: "#FEF2F2",
-                      },
-                    }}
-                  >
-                    Удалить
-                  </BasicButton>
-                </div>
-              )}
-            </div>
+  const handleDelete = async (id: string) => {
+    try {
+      await deletePost(id);
+      toast.success("Новость успешно удалена");
+    } catch (error) {
+      toast.error("Ошибка при удалении новости");
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleOpenDialog = (action: newsActions) => {
+    setCurrentAction(action);
+    setIsDialogOpen(true);
+  };
+
+  const DynamicDialogComponent = ({ action }: { action: newsActions }) => {
+    const Component = NEWS_DIALOG_COMPONENTS[action];
+    return <Component close={handleCloseDialog} />;
+  };
+
+  useEffect(() => {
+    if (isError) {
+      toast.error("Ошибка при загрузке новостей");
+    }
+  }, [isError]);
+
+  useEffect(() => {
+    const listenFunc = () => handleOpenDialog(newsActions.CREATE);
+
+    window.addEventListener("openAddNewsDialog", listenFunc);
+
+    return () => {
+      window.removeEventListener("openAddNewsDialog", listenFunc);
+    };
+  }, []);
+
+  if (isLoading && currentPage === 1) {
+    return (
+      <motion.div
+        className="h-full flex flex-col gap-8 items-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Skeleton className="h-10 w-64" />
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+          {[...Array(6)].map((_, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                delay: index * 0.05,
+                duration: 0.3,
+              }}
+            >
+              <Card className="w-[368px] h-[450px] !bg-base-1 !rounded-[16px]">
+                <CardContent className="h-full flex flex-col">
+                  <Skeleton
+                    variant="rectangular"
+                    className="h-[300px] w-full"
+                  />
+                  <div className="mt-4 flex-grow flex flex-col">
+                    <Skeleton variant="text" className="h-6 w-3/4" />
+                    <Skeleton variant="text" className="h-4 w-full mt-2" />
+                    <Skeleton variant="text" className="h-4 w-2/3 mt-2" />
+                    <div className="mt-auto pt-4">
+                      <Skeleton variant="rounded" className="h-10 w-full" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      className="h-full flex flex-col gap-8 items-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {isDialogOpen && (
+        <Dialog
+          sx={{
+            "& .MuiPaper-root": {
+              borderRadius: "32px",
+              overflow: "hidden",
+            },
+            "& .MuiDialog-paper": {
+              width: "80vw",
+              maxWidth: "900px",
+              height: "80vh",
+            },
+          }}
+          open={isDialogOpen}
+          onClose={handleCloseDialog}
+        >
+          {currentAction && <DynamicDialogComponent action={currentAction} />}
+        </Dialog>
+      )}
+
+      <motion.h1
+        className="typography__h1"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {accessToken ? "Список новостей" : "Последние новости"}
+      </motion.h1>
+
+      <div className="h-full">
+        {posts.length > 0 ? (
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+            {posts.map((post, index) => (
+              <motion.div
+                key={post.id}
+                className="flex flex-col gap-5"
+                initial="hidden"
+                animate="visible"
+                custom={index}
+                transition={{ delay: index * 0.1 }}
+              >
+                <NewsCard
+                  id={post.id}
+                  title={post.title}
+                  content={post.content}
+                  date={post.date}
+                />
+                {accessToken && (
+                  <motion.div
+                    className="flex flex-row gap-4"
+                    variants={buttonGroupVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    <motion.div className="w-full" variants={buttonVariants}>
+                      <BasicButton
+                        className="w-full"
+                        onClick={() => handleOpenDialog(newsActions.EDIT)}
+                      >
+                        Редактировать
+                      </BasicButton>
+                    </motion.div>
+                    <motion.div className="w-full" variants={buttonVariants}>
+                      <BasicButton
+                        className="w-full"
+                        onClick={() => handleDelete(post.id)}
+                        sx={{
+                          color: "#DC2626",
+                          backgroundColor: "transparent",
+                          border: "1px solid #DC2626",
+                          "&:hover": {
+                            backgroundColor: "#FEF2F2",
+                          },
+                        }}
+                      >
+                        Удалить
+                      </BasicButton>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            className="text-center py-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <p>Новости не найдены</p>
+          </motion.div>
+        )}
       </div>
-      <div className="p-8">
-        <BasicButton>Загрузить ещё</BasicButton>
-      </div>
-    </div>
+
+      {currentPage < totalPages && (
+        <motion.div
+          className="p-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <BasicButton onClick={handleLoadMore} disabled={isLoading}>
+            {isLoading ? "Загрузка..." : "Загрузить ещё"}
+          </BasicButton>
+        </motion.div>
+      )}
+    </motion.div>
   );
 };
 

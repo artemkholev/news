@@ -5,12 +5,14 @@ import styled from "@emotion/styled";
 interface CustomInputProps {
   label?: string;
   placeholder?: string;
+  rows?: string | number;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: boolean;
   helperText?: string;
   name?: string;
   type?: string;
+  multiline?: boolean;
 }
 
 const StyledInput = styled(TextField)`
@@ -18,7 +20,6 @@ const StyledInput = styled(TextField)`
     border-radius: 20px;
     background-color: transperent;
     padding-left: 16px;
-    height: 56px;
     font-size: 16px;
 
     &:hover {
@@ -26,6 +27,11 @@ const StyledInput = styled(TextField)`
 
     &.Mui-focused {
     }
+  }
+
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border-color: #2563EB;
+    border-width: 1px;
   }
 
   & .MuiOutlinedInput-notchedOutline {
@@ -51,12 +57,16 @@ const InputText: React.FC<CustomInputProps> = ({
   error,
   helperText,
   name,
-  type = "text", // Значение по умолчанию
+  rows,
+  type = "text",
+  multiline = false,
 }) => {
   return (
     <StyledInput
-      name={name} // Передаем name
-      type={type} // Передаем type
+      name={name}
+      type={type}
+      rows={rows}
+      multiline={multiline}
       label={label}
       variant="outlined"
       placeholder={placeholder}

@@ -14,8 +14,8 @@ export const getPosts = async (page: number, sort: string) => {
     });
 
     return {
-      posts: response.data,
-      totalCount: parseInt(response.headers["x-total-count"]) || 0,
+      posts: response.data.items,
+      totalCount: response.data.items.total,
     };
   } catch (error) {
     throw error;
@@ -40,9 +40,13 @@ export const getAuthor = async (id: number) => {
   }
 };
 
-export const createPost = async (postData: Omit<IPost, "id">) => {
+export const createPost = async (postData: FormData) => {
   try {
-    const response = await baseApi.post("/posts", postData);
+    const response = await baseApi.post("/posts", postData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -58,7 +62,7 @@ export const updatePost = async (postData: IPost) => {
   }
 };
 
-export const deletePost = async (id: number) => {
+export const deletePost = async (id: string) => {
   try {
     await baseApi.delete(`/posts/${id}`);
   } catch (error) {

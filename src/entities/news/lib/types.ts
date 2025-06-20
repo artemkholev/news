@@ -1,8 +1,9 @@
 export interface IPost {
-  id: number;
+  id: string;
   title: string;
-  body: string;
-  userId: number;
+  content: string;
+  imageUrl?: string;
+  date: string;
 }
 
 export interface IAuthor {

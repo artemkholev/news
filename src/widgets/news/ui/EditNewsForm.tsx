@@ -1,10 +1,9 @@
 "use client";
-
 import { Box, Typography, TextField, Button, Divider } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { UploadFile } from "@mui/icons-material";
 
-export default function AddNewsWidget() {
+export default function EditNewsForm() {
   return (
     <Box
       sx={{

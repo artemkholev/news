@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import { usePathname } from "next/navigation";
 import { Header } from "@/widgets/header";
 import { Footer } from "@/widgets/footer";

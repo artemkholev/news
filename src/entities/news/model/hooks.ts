@@ -82,7 +82,7 @@ export const useNews = () => {
     }
   }, []);
 
-  const createNewPost = useCallback(async (postData: Omit<IPost, "id">) => {
+  const createNewPost = useCallback(async (postData: FormData) => {
     setIsLoading(true);
     setIsError(false);
 
@@ -126,14 +126,13 @@ export const useNews = () => {
     }
   }, []);
 
-  const deleteExistingPost = useCallback(async (id: number) => {
+  const deleteExistingPost = useCallback(async (id: string) => {
     setIsLoading(true);
     setIsError(false);
 
     try {
+      debugger
       await newsApi.deletePost(id);
-      // Инвалидируем кэш
-      setCachedPages({});
     } catch (error) {
       setIsError(true);
       console.error("Failed to delete post:", error);
@@ -159,6 +158,7 @@ export const useNews = () => {
     setCurrentPage,
     totalPages,
     fetchPost,
+    fetchPosts,
     fetchAuthor,
     createPost: createNewPost,
     updatePost: updateExistingPost,
