@@ -4,10 +4,16 @@ import { BasicButton, TabsComponent } from "@/shared/ui";
 import { AppRoutes } from "@/shared/router/router.options";
 import Link from "next/link";
 import { useAuth } from "@/features/auth";
+import { useEffect, useState } from "react";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
   const { logout, accessToken } = useAuth();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const tabsData = [
     { label: "Главная", href: AppRoutes.HOME },
@@ -20,18 +26,30 @@ const Header: React.FC = () => {
     window.dispatchEvent(event);
   };
 
+  if (!isClient) {
+    return (
+      <header className="header">
+        <div className="header__container">
+          <span className="typography__h2 text-blue-7">News for everyone</span>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className="header">
       <div className="header__container">
         {accessToken ? (
           <>
-            <BasicButton onClick={() => logout}>Режим пользователя</BasicButton>
+            <BasicButton onClick={() => logout()}>
+              Режим пользователя
+            </BasicButton>
 
             <span className="typography__h2 text-blue-7">
               News for everyone
             </span>
 
-            <BasicButton onClick={() => handleAddNewsClick}>
+            <BasicButton onClick={handleAddNewsClick}>
               Добавить новость
             </BasicButton>
           </>

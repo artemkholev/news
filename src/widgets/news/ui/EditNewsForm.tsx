@@ -1,101 +1,164 @@
 "use client";
-import { Box, Typography, TextField, Button, Divider } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
+import { Box, Typography } from "@mui/material";
+import { BasicButton, InputText } from "@/shared/ui";
 import { UploadFile } from "@mui/icons-material";
+import { useState, useRef, ChangeEvent } from "react";
+import Image from "next/image";
+import { useNews } from "@/entities/news/model/hooks";
 
-export default function EditNewsForm() {
+interface AddNewsFormProps {
+  close: () => void;
+}
+
+interface NewsData {
+  title: string;
+  text: string;
+}
+
+export default function EditNewsForm({ close }: AddNewsFormProps) {
+  const { createPost } = useNews();
+  const [newsData, setNewsData] = useState<NewsData>({
+    title: "",
+    text: "",
+  });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewsData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      // Создаем превью изображения
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("title", newsData.title);
+      formData.append("content", newsData.text);
+      if (selectedFile) {
+        formData.append("image", selectedFile);
+      }
+
+      await createPost(formData);
+      close();
+    } catch (error) {
+      console.error("Ошибка при создании поста:", error);
+    }
+  };
+
   return (
-    <Box
-      sx={{
-        maxWidth: 600,
-        mx: "auto",
-        p: 3,
-        bgcolor: "background.paper",
-        borderRadius: 2,
-      }}
-    >
-      {/* Заголовок формы */}
-      <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 3 }}>
-        Добавить новость
-      </Typography>
+    <div className="h-full flex flex-col p-[60px] items-center">
+      <h3 className="typography__h2 text-blue-7 mb-9">Редактировать новость</h3>
 
-      {/* Поле заголовка */}
-      <Typography variant="subtitle1" component="h2" gutterBottom>
-        Заголовок
-      </Typography>
-      <TextField
-        fullWidth
-        variant="outlined"
-        placeholder="Введите заголовок новости"
-        sx={{ mb: 3 }}
-      />
+      <div className="w-full h-full flex flex-col gap-4">
+        <InputText
+          name="title"
+          label="Заголовок"
+          placeholder="Введите заголовок новости"
+          value={newsData.title}
+          onChange={handleChange}
+        />
 
-      {/* Поле краткого описания */}
-      <TextField
-        fullWidth
-        multiline
-        rows={2}
-        variant="outlined"
-        placeholder="Краткое описание"
-        sx={{ mb: 3 }}
-      />
+        <InputText
+          name="text"
+          label="Текст новости"
+          multiline
+          rows={6}
+          placeholder="Введите текст новости"
+          value={newsData.text}
+          onChange={handleChange}
+        />
 
-      {/* Поле основного текста */}
-      <TextField
-        fullWidth
-        multiline
-        rows={6}
-        variant="outlined"
-        placeholder="Текст новости"
-        sx={{ mb: 3 }}
-      />
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept="image/*"
+          style={{ display: "none" }}
+        />
 
-      <Divider sx={{ my: 3 }} />
+        <Box
+          onClick={handleUploadClick}
+          sx={{
+            border: "1px solid #d4d4d4",
+            borderColor: "divider",
+            borderRadius: 6,
+            p: 4,
+            textAlign: "center",
+            cursor: "pointer",
+            "&:hover": {
+              borderColor: "primary.main",
+              bgcolor: "action.hover",
+            },
+          }}
+        >
+          {previewUrl ? (
+            <Image
+              src={previewUrl}
+              alt="Preview"
+              fill
+              style={{
+                objectFit: "contain",
+              }}
+              unoptimized={true}
+            />
+          ) : (
+            <UploadFile
+              fontSize="large"
+              sx={{ mb: 1, color: "text.secondary" }}
+            />
+          )}
+          <Typography variant="body1" color="text.secondary">
+            {selectedFile
+              ? selectedFile.name
+              : "Перетащите файл или нажмите, чтобы выбрать"}
+          </Typography>
+        </Box>
+      </div>
 
-      {/* Дата публикации */}
-      <Typography
-        variant="subtitle1"
-        component="h2"
-        gutterBottom
-        sx={{ mb: 2 }}
-      >
-        Дата публикации
-      </Typography>
-      <DatePicker sx={{ width: "100%", mb: 3 }} />
-
-      {/* Загрузка файла */}
-      <Box
-        sx={{
-          border: "1px dashed",
-          borderColor: "divider",
-          borderRadius: 1,
-          p: 4,
-          textAlign: "center",
-          mb: 3,
-          cursor: "pointer",
-          "&:hover": {
-            borderColor: "primary.main",
-            bgcolor: "action.hover",
-          },
-        }}
-      >
-        <UploadFile fontSize="large" sx={{ mb: 1, color: "text.secondary" }} />
-        <Typography variant="body1" color="text.secondary">
-          Перетащите файл или нажмите, чтобы выбрать
-        </Typography>
-      </Box>
-
-      <Divider sx={{ my: 3 }} />
-
-      {/* Кнопки действий */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-        <Button variant="outlined" color="inherit">
+      <div className="w-full flex flex-row gap-4">
+        <BasicButton
+          className="w-full"
+          onClick={close}
+          sx={{
+            color: "#DC2626",
+            backgroundColor: "transparent",
+            border: "1px solid #DC2626",
+            "&:hover": {
+              backgroundColor: "#FEF2F2",
+            },
+          }}
+        >
           Отменить
-        </Button>
-        <Button variant="contained" color="primary">
-          Опубликовать
-        </Button>
-      </Box>
-    </Box>
+        </BasicButton>
+        <BasicButton
+          className="w-full"
+          onClick={handleSubmit}
+          disabled={!newsData.title || !newsData.text}
+        >
+          Сохранить
+        </BasicButton>
+      </div>
+    </div>
   );
 }

@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { AddNewsForm, EditNewsForm } from "@/widgets/news";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 enum newsActions {
   CREATE = "create",
@@ -21,18 +21,6 @@ export const NEWS_DIALOG_COMPONENTS = {
   [newsActions.CREATE]: AddNewsForm,
   [newsActions.EDIT]: EditNewsForm,
 } as const;
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  },
-};
 
 const buttonGroupVariants = {
   hidden: { opacity: 0 },
@@ -65,19 +53,23 @@ const HomePage: React.FC = () => {
     currentPage,
     setCurrentPage,
     totalPages,
-    fetchPosts,
     deletePost,
   } = useNews();
 
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [currentAction, setCurrentAction] = useState<newsActions | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleDelete = async (id: string) => {
     try {
       await deletePost(id);
       toast.success("Новость успешно удалена");
-    } catch (error) {
-      toast.error("Ошибка при удалении новости");
+    } catch (error: any) {
+      toast.error("Ошибка при удалении новости", error);
     }
   };
 
@@ -199,9 +191,12 @@ const HomePage: React.FC = () => {
         className="typography__h1"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
       >
-        {accessToken ? "Список новостей" : "Последние новости"}
+        {!isClient
+          ? "Последние новости"
+          : accessToken
+          ? "Список новостей"
+          : "Последние новости"}
       </motion.h1>
 
       <div className="h-full">
@@ -217,10 +212,10 @@ const HomePage: React.FC = () => {
                 transition={{ delay: index * 0.1 }}
               >
                 <NewsCard
-                  id={post.id}
                   title={post.title}
+                  imageUrl={post.imageUrl}
                   content={post.content}
-                  date={post.date}
+                  date={post.createdAt}
                 />
                 {accessToken && (
                   <motion.div

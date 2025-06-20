@@ -1,8 +1,9 @@
 "use client";
-import { Box, Typography, TextField } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { BasicButton, InputText } from "@/shared/ui";
 import { UploadFile } from "@mui/icons-material";
 import { useState, useRef, ChangeEvent } from "react";
+import Image from "next/image";
 import { useNews } from "@/entities/news/model/hooks";
 
 interface AddNewsFormProps {
@@ -112,14 +113,14 @@ export default function AddNewsForm({ close }: AddNewsFormProps) {
           }}
         >
           {previewUrl ? (
-            <img
+            <Image
               src={previewUrl}
               alt="Preview"
+              fill
               style={{
-                maxWidth: "100%",
-                maxHeight: "200px",
-                marginBottom: "16px",
+                objectFit: "contain",
               }}
+              unoptimized={true}
             />
           ) : (
             <UploadFile
