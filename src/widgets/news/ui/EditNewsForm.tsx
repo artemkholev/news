@@ -5,24 +5,21 @@ import { UploadFile } from "@mui/icons-material";
 import { useState, useRef, ChangeEvent } from "react";
 import Image from "next/image";
 import { useNews } from "@/entities/news/model/hooks";
+import { IPost } from "@/entities/news";
 
-interface AddNewsFormProps {
+interface EditNewsFormProps {
   close: () => void;
+  item: IPost;
 }
 
-interface NewsData {
-  title: string;
-  text: string;
-}
-
-export default function EditNewsForm({ close }: AddNewsFormProps) {
+export default function EditNewsForm({ close, item }: EditNewsFormProps) {
   const { createPost } = useNews();
-  const [newsData, setNewsData] = useState<NewsData>({
-    title: "",
-    text: "",
-  });
+  const [newsData, setNewsData] = useState<IPost>(item);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    (process.env.NEXT_PUBLIC_API_URL ?? "") + (item.imageUrl?.slice(1) ?? "")
+  );
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +51,7 @@ export default function EditNewsForm({ close }: AddNewsFormProps) {
     try {
       const formData = new FormData();
       formData.append("title", newsData.title);
-      formData.append("content", newsData.text);
+      formData.append("content", newsData.content);
       if (selectedFile) {
         formData.append("image", selectedFile);
       }
@@ -85,7 +82,7 @@ export default function EditNewsForm({ close }: AddNewsFormProps) {
           multiline
           rows={6}
           placeholder="Введите текст новости"
-          value={newsData.text}
+          value={newsData.content}
           onChange={handleChange}
         />
 
@@ -100,12 +97,19 @@ export default function EditNewsForm({ close }: AddNewsFormProps) {
         <Box
           onClick={handleUploadClick}
           sx={{
+            position: "relative",
             border: "1px solid #d4d4d4",
             borderColor: "divider",
             borderRadius: 6,
             p: 4,
             textAlign: "center",
             cursor: "pointer",
+            minHeight: "200px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "hidden",
             "&:hover": {
               borderColor: "primary.main",
               bgcolor: "action.hover",
@@ -113,26 +117,42 @@ export default function EditNewsForm({ close }: AddNewsFormProps) {
           }}
         >
           {previewUrl ? (
-            <Image
-              src={previewUrl}
-              alt="Preview"
-              fill
-              style={{
-                objectFit: "contain",
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-              unoptimized={true}
-            />
+            >
+              <Image
+                src={previewUrl}
+                alt="Preview"
+                fill
+                style={{
+                  objectFit: "contain",
+                }}
+                unoptimized={true}
+                priority={true}
+              />
+            </Box>
           ) : (
-            <UploadFile
-              fontSize="large"
-              sx={{ mb: 1, color: "text.secondary" }}
-            />
+            <>
+              <UploadFile
+                fontSize="large"
+                sx={{ mb: 1, color: "text.secondary" }}
+              />
+              <Typography variant="body1" color="text.secondary">
+                {selectedFile
+                  ? selectedFile.name
+                  : "Перетащите файл или нажмите, чтобы выбрать"}
+              </Typography>
+            </>
           )}
-          <Typography variant="body1" color="text.secondary">
-            {selectedFile
-              ? selectedFile.name
-              : "Перетащите файл или нажмите, чтобы выбрать"}
-          </Typography>
         </Box>
       </div>
 
@@ -154,7 +174,7 @@ export default function EditNewsForm({ close }: AddNewsFormProps) {
         <BasicButton
           className="w-full"
           onClick={handleSubmit}
-          disabled={!newsData.title || !newsData.text}
+          disabled={!newsData.title || !newsData.content}
         >
           Сохранить
         </BasicButton>

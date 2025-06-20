@@ -11,6 +11,7 @@ const BasicButton = styled(Button)(() => ({
   fontWeight: 400,
   padding: "4px 20px",
   minWidth: "auto",
+  minHeight: "40px",
   borderRadius: "32px",
   "&:hover": {
     backgroundColor: "#3B82F6",

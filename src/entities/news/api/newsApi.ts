@@ -55,7 +55,11 @@ export const createPost = async (postData: FormData) => {
 
 export const updatePost = async (postData: IPost) => {
   try {
-    const response = await baseApi.put(`/posts/${postData.id}`, postData);
+    const response = await baseApi.put(`/posts/${postData.id}`, postData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { BasicButton } from "@/shared/ui";
 import Dialog from "@mui/material/Dialog";
-import { NewsCard } from "@/entities/news";
+import { IPost, NewsCard } from "@/entities/news";
 import { useAuth } from "@/features/auth";
 import { useNews } from "@/entities/news/model/hooks";
 import { Skeleton } from "@mui/material";
@@ -57,7 +57,10 @@ const HomePage: React.FC = () => {
   } = useNews();
 
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [currentAction, setCurrentAction] = useState<newsActions | null>(null);
+  const [currentActionConfig, setCurrentActionConfig] = useState<Record<
+    string,
+    any
+  > | null>(null);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -83,14 +86,20 @@ const HomePage: React.FC = () => {
     setIsDialogOpen(false);
   };
 
-  const handleOpenDialog = (action: newsActions) => {
-    setCurrentAction(action);
+  const handleOpenDialog = (action: newsActions, item: IPost | null = null) => {
+    setCurrentActionConfig({ action, item });
     setIsDialogOpen(true);
   };
 
-  const DynamicDialogComponent = ({ action }: { action: newsActions }) => {
+  const DynamicDialogComponent = ({
+    action,
+    item,
+  }: {
+    action: newsActions;
+    item: IPost;
+  }) => {
     const Component = NEWS_DIALOG_COMPONENTS[action];
-    return <Component close={handleCloseDialog} />;
+    return <Component close={handleCloseDialog} item={item} />;
   };
 
   useEffect(() => {
@@ -183,7 +192,12 @@ const HomePage: React.FC = () => {
           open={isDialogOpen}
           onClose={handleCloseDialog}
         >
-          {currentAction && <DynamicDialogComponent action={currentAction} />}
+          {currentActionConfig?.action && (
+            <DynamicDialogComponent
+              action={currentActionConfig.action}
+              item={currentActionConfig.item}
+            />
+          )}
         </Dialog>
       )}
 
@@ -227,7 +241,7 @@ const HomePage: React.FC = () => {
                     <motion.div className="w-full" variants={buttonVariants}>
                       <BasicButton
                         className="w-full"
-                        onClick={() => handleOpenDialog(newsActions.EDIT)}
+                        onClick={() => handleOpenDialog(newsActions.EDIT, post)}
                       >
                         Редактировать
                       </BasicButton>
