@@ -2,8 +2,11 @@
 import React, { useMemo } from "react";
 import Image from "next/image";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
+import { AppRoutes } from "@/shared/router/router.options";
 
 interface NewsCardProps {
+  id: string;
   title: string;
   content: string;
   imageUrl?: string;
@@ -11,17 +14,27 @@ interface NewsCardProps {
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({
+  id,
   title,
   content,
   imageUrl,
   date,
 }) => {
+  const router = useRouter();
+
   const newsDate = useMemo(() => {
     return dayjs(date).format("DD.MM.YYYY");
   }, [date]);
 
+  const handleCardClick = () => {
+    router.push(AppRoutes.NEWS_ITEM.replace(":id", id));
+  };
+
   return (
-    <div className="w-[370px] h-[450px] p-2 bg-base-1 hover:bg-blue-700 rounded-xl overflow-hidden hover:shadow-lg duration-300 group">
+    <div
+      className="w-[370px] h-[450px] p-2 bg-base-1 hover:bg-blue-700 rounded-xl overflow-hidden hover:shadow-lg duration-300 group"
+      onClick={handleCardClick}
+    >
       <div className="h-[270px] bg-gray-200 relative rounded-xl">
         {imageUrl && (
           <Image

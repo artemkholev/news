@@ -22,7 +22,7 @@ export const getPosts = async (page: number, sort: string) => {
   }
 };
 
-export const getPost = async (id: number) => {
+export const getPost = async (id: string) => {
   try {
     const response = await baseApi.get(`/posts/${id}`);
     return response.data;

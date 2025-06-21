@@ -26,6 +26,8 @@ const Header: React.FC = () => {
     window.dispatchEvent(event);
   };
 
+  const isNewsDetailPage = pathname.startsWith("/news/");
+
   if (!isClient) {
     return (
       <header className="header">
@@ -55,15 +57,23 @@ const Header: React.FC = () => {
           </>
         ) : (
           <>
+            {isNewsDetailPage && (
+              <Link href={AppRoutes.HOME}>
+                <BasicButton>Назад к ленте</BasicButton>
+              </Link>
+            )}
+
             <Link href={AppRoutes.HOME}>
               <span className="typography__h2 text-blue-7">
                 News for everyone
               </span>
             </Link>
 
-            <div className="absolute left-1/2 transform -translate-x-1/2">
-              <TabsComponent items={tabsData} activeTab={pathname} />
-            </div>
+            {!isNewsDetailPage && (
+              <div className="absolute left-1/2 transform -translate-x-1/2">
+                <TabsComponent items={tabsData} activeTab={pathname} />
+              </div>
+            )}
 
             <Link href={AppRoutes.AUTH_LOGIN}>
               <BasicButton>Админ</BasicButton>

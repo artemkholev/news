@@ -226,6 +226,7 @@ const HomePage: React.FC = () => {
                 transition={{ delay: index * 0.1 }}
               >
                 <NewsCard
+                  id={post.id}
                   title={post.title}
                   imageUrl={post.imageUrl}
                   content={post.content}

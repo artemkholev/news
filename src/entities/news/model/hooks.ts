@@ -48,7 +48,7 @@ export const useNews = () => {
     }
   }, [currentPage, selectedSort, cachedPages]);
 
-  const fetchPost = useCallback(async (id: number) => {
+  const fetchPost = useCallback(async (id: string) => {
     setIsLoading(true);
     setIsError(false);
 

@@ -39,7 +39,7 @@ const StyledInput = styled(TextField)`
   }
 
   & .Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: #000;
+    border-color: #2563EB;
   }
 
   & .MuiInputLabel-root.Mui-focused {
