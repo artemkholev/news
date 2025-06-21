@@ -5,6 +5,7 @@ import { UploadFile } from "@mui/icons-material";
 import { useState, useRef, ChangeEvent } from "react";
 import Image from "next/image";
 import { useNews } from "@/entities/news/model/hooks";
+import { toast } from "react-toastify";
 
 interface AddNewsFormProps {
   close: () => void;
@@ -60,8 +61,11 @@ export default function AddNewsForm({ close }: AddNewsFormProps) {
       }
 
       await createPost(formData);
+
+      toast.success("Новость создана");
       close();
     } catch (error) {
+      toast.error("Ошибка создания");
       console.error("Ошибка при создании поста:", error);
     }
   };
@@ -100,12 +104,19 @@ export default function AddNewsForm({ close }: AddNewsFormProps) {
         <Box
           onClick={handleUploadClick}
           sx={{
+            position: "relative",
             border: "1px solid #d4d4d4",
             borderColor: "divider",
             borderRadius: 6,
             p: 4,
             textAlign: "center",
             cursor: "pointer",
+            minHeight: "200px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "hidden",
             "&:hover": {
               borderColor: "primary.main",
               bgcolor: "action.hover",
@@ -113,26 +124,42 @@ export default function AddNewsForm({ close }: AddNewsFormProps) {
           }}
         >
           {previewUrl ? (
-            <Image
-              src={previewUrl}
-              alt="Preview"
-              fill
-              style={{
-                objectFit: "contain",
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-              unoptimized={true}
-            />
+            >
+              <Image
+                src={previewUrl}
+                alt="Preview"
+                fill
+                style={{
+                  objectFit: "contain",
+                }}
+                unoptimized={true}
+                priority={true}
+              />
+            </Box>
           ) : (
-            <UploadFile
-              fontSize="large"
-              sx={{ mb: 1, color: "text.secondary" }}
-            />
+            <>
+              <UploadFile
+                fontSize="large"
+                sx={{ mb: 1, color: "text.secondary" }}
+              />
+              <Typography variant="body1" color="text.secondary">
+                {selectedFile
+                  ? selectedFile.name
+                  : "Перетащите файл или нажмите, чтобы выбрать"}
+              </Typography>
+            </>
           )}
-          <Typography variant="body1" color="text.secondary">
-            {selectedFile
-              ? selectedFile.name
-              : "Перетащите файл или нажмите, чтобы выбрать"}
-          </Typography>
         </Box>
       </div>
 

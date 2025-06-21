@@ -7,6 +7,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import theme from "@/system/css/theme";
 import StoreProvider from "@/system/providers/StoreProvider";
+import { ToastContainer } from "react-toastify"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
             <PageWrapper>{children}</PageWrapper>
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
           </ThemeProvider>
         </AppRouterCacheProvider>
       </StoreProvider>

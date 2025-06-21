@@ -6,10 +6,16 @@
   @apply w-[1250px] flex flex-row justify-between text-white px-[105px] py-[32px];
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1250px) {
+  .footer__container {
+    @apply w-[800px];
+  }
 }
 
 @media (max-width: 768px) {
+  .footer__container {
+    @apply w-[500px] flex flex-col gap-8 mb-8;
+  }
 }
 
 @media (max-width: 400px) {

@@ -50,9 +50,9 @@ const HomePage: React.FC = () => {
     isLoading,
     isError,
     posts,
+    hasMore,
     currentPage,
-    setCurrentPage,
-    totalPages,
+    loadMorePosts,
     deletePost,
   } = useNews();
 
@@ -73,12 +73,6 @@ const HomePage: React.FC = () => {
       toast.success("Новость успешно удалена");
     } catch (error: any) {
       toast.error("Ошибка при удалении новости", error);
-    }
-  };
-
-  const handleLoadMore = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
     }
   };
 
@@ -215,7 +209,7 @@ const HomePage: React.FC = () => {
 
       <div className="h-full">
         {posts.length > 0 ? (
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
             {posts.map((post, index) => (
               <motion.div
                 key={post.id}
@@ -280,14 +274,14 @@ const HomePage: React.FC = () => {
         )}
       </div>
 
-      {currentPage < totalPages && (
+      {hasMore && (
         <motion.div
           className="p-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <BasicButton onClick={handleLoadMore} disabled={isLoading}>
+          <BasicButton onClick={loadMorePosts} disabled={isLoading}>
             {isLoading ? "Загрузка..." : "Загрузить ещё"}
           </BasicButton>
         </motion.div>

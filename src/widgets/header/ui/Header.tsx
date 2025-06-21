@@ -43,9 +43,17 @@ const Header: React.FC = () => {
       <div className="header__container">
         {accessToken ? (
           <>
-            <BasicButton onClick={() => logout()}>
-              Режим пользователя
-            </BasicButton>
+            {isNewsDetailPage && (
+              <Link href={AppRoutes.HOME}>
+                <BasicButton>Назад к ленте</BasicButton>
+              </Link>
+            )}
+
+            {!isNewsDetailPage && (
+              <BasicButton onClick={() => logout()}>
+                Режим пользователя
+              </BasicButton>
+            )}
 
             <span className="typography__h2 text-blue-7">
               News for everyone

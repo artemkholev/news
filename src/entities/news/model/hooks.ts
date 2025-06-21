@@ -1,168 +1,169 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import * as newsApi from "../api/newsApi";
-import { IPost, IAuthor } from "../lib/types";
+import { IPost } from "../lib/types";
 import { LIMIT } from "../lib/constants";
 
 export const useNews = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [posts, setPosts] = useState<IPost[]>([]);
   const [post, setPost] = useState<IPost | null>(null);
-  const [author, setAuthor] = useState<IAuthor | null>(null);
-  const [selectedSort, setSelectedSort] = useState("general");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [cachedPages, setCachedPages] = useState<Record<number, IPost[]>>({});
+  const [hasMore, setHasMore] = useState(true);
+
+  const initialLoad = useRef(true);
+  const isLoadingRef = useRef(false);
 
   const fetchPosts = useCallback(async () => {
+    if (!hasMore || isLoadingRef.current) return;
+
+    isLoadingRef.current = true;
     setIsLoading(true);
     setIsError(false);
+    setErrorMessage(null);
 
     try {
-      // Проверяем кэш
-      if (cachedPages[currentPage] && selectedSort === "general") {
-        setPosts(cachedPages[currentPage]);
-        return;
-      }
-
       const { posts: fetchedPosts, totalCount } = await newsApi.getPosts(
-        currentPage,
-        selectedSort
+        currentPage
       );
 
-      setPosts(fetchedPosts);
-      setTotalPages(Math.ceil(totalCount / LIMIT));
+      setPosts((prev) => {
+        // Фильтруем дубликаты
+        const existingIds = new Set(prev.map((p) => p.id));
+        const uniqueNewPosts = fetchedPosts.filter(
+          (newPost: IPost) => !existingIds.has(newPost.id)
+        );
 
-      // Кэшируем только для обычной сортировки
-      if (selectedSort === "general") {
-        setCachedPages((prev) => ({
-          ...prev,
-          [currentPage]: fetchedPosts,
-        }));
-      }
+        return [...prev, ...uniqueNewPosts];
+      });
+
+      // Проверяем, есть ли еще посты для загрузки
+      setHasMore(
+        fetchedPosts.length === LIMIT && currentPage * LIMIT < totalCount
+      );
     } catch (error) {
       setIsError(true);
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to fetch posts"
+      );
       console.error("Failed to fetch posts:", error);
     } finally {
+      isLoadingRef.current = false;
       setIsLoading(false);
+      initialLoad.current = false;
     }
-  }, [currentPage, selectedSort, cachedPages]);
+  }, [currentPage, hasMore]);
 
-  const fetchPost = useCallback(async (id: string) => {
-    setIsLoading(true);
-    setIsError(false);
-
-    try {
-      const postData = await newsApi.getPost(id);
-      setPost(postData);
-      return postData;
-    } catch (error) {
-      setIsError(true);
-      console.error("Failed to fetch post:", error);
-      throw error;
-    } finally {
-      setIsLoading(false);
+  // Инициализация и загрузка при изменении параметров
+  useEffect(() => {
+    // Первый запрос делаем сразу, последующие - только при изменении currentPage
+    if (initialLoad.current || !initialLoad.current) {
+      fetchPosts();
     }
-  }, []);
+  }, [currentPage, fetchPosts]);
 
-  const fetchAuthor = useCallback(async (userId: number) => {
-    setIsLoading(true);
-    setIsError(false);
-
-    try {
-      const authorData = await newsApi.getAuthor(userId);
-      setAuthor(authorData);
-      return authorData;
-    } catch (error) {
-      setIsError(true);
-      console.error("Failed to fetch author:", error);
-      throw error;
-    } finally {
-      setIsLoading(false);
+  const loadMorePosts = useCallback(() => {
+    if (hasMore && !isLoadingRef.current) {
+      setCurrentPage((prev) => prev + 1);
     }
-  }, []);
+  }, [hasMore]);
 
-  const createNewPost = useCallback(async (postData: FormData) => {
+  const fetchPost = useCallback(
+    async (id: string) => {
+      if (post?.id === id) return post;
+
+      setIsLoading(true);
+      try {
+        const postData = await newsApi.getPost(id);
+        setPost(postData);
+        return postData;
+      } catch (error) {
+        setIsError(true);
+        setErrorMessage(
+          error instanceof Error ? error.message : "Failed to fetch post"
+        );
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [post]
+  );
+
+  const createPost = useCallback(async (postData: FormData) => {
     setIsLoading(true);
-    setIsError(false);
-
     try {
       const newPost = await newsApi.createPost(postData);
-      // Инвалидируем кэш
-      setCachedPages({});
+      debugger
+      setPosts((prev) => [newPost, ...prev]);
       return newPost;
     } catch (error) {
       setIsError(true);
-      console.error("Failed to create post:", error);
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to create post"
+      );
       throw error;
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const updateExistingPost = useCallback(async (postData: IPost) => {
-    setIsLoading(true);
-    setIsError(false);
+  const updatePost = useCallback(
+    async (postData: IPost) => {
+      setIsLoading(true);
+      try {
+        const updatedPost = await newsApi.updatePost(postData);
+        setPosts((prev) =>
+          prev.map((p) => (p.id === updatedPost.id ? updatedPost : p))
+        );
+        if (post?.id === updatedPost.id) setPost(updatedPost);
+        return updatedPost;
+      } catch (error) {
+        setIsError(true);
+        setErrorMessage(
+          error instanceof Error ? error.message : "Failed to update post"
+        );
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [post]
+  );
 
-    try {
-      const updatedPost = await newsApi.updatePost(postData);
-      // Обновляем пост в кэше, если он там есть
-      setCachedPages((prev) => {
-        const newCache = { ...prev };
-        for (const page in newCache) {
-          newCache[page] = newCache[page].map((p) =>
-            p.id === updatedPost.id ? updatedPost : p
-          );
-        }
-        return newCache;
-      });
-      return updatedPost;
-    } catch (error) {
-      setIsError(true);
-      console.error("Failed to update post:", error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const deleteExistingPost = useCallback(async (id: string) => {
-    setIsLoading(true);
-    setIsError(false);
-
-    try {
-      debugger
-      await newsApi.deletePost(id);
-    } catch (error) {
-      setIsError(true);
-      console.error("Failed to delete post:", error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+  const deletePost = useCallback(
+    async (id: string) => {
+      setIsLoading(true);
+      try {
+        await newsApi.deletePost(id);
+        setPosts((prev) => prev.filter((p) => p.id !== id));
+        if (post?.id === id) setPost(null);
+      } catch (error) {
+        setIsError(true);
+        setErrorMessage(
+          error instanceof Error ? error.message : "Failed to delete post"
+        );
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [post]
+  );
 
   return {
     isLoading,
     isError,
+    errorMessage,
     posts,
     post,
-    author,
-    selectedSort,
-    setSelectedSort,
     currentPage,
-    setCurrentPage,
-    totalPages,
+    loadMorePosts,
+    hasMore,
     fetchPost,
-    fetchPosts,
-    fetchAuthor,
-    createPost: createNewPost,
-    updatePost: updateExistingPost,
-    deletePost: deleteExistingPost,
-    cachedPages,
+    createPost,
+    updatePost,
+    deletePost,
   };
 };

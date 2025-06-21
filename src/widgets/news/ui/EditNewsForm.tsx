@@ -6,6 +6,7 @@ import { useState, useRef, ChangeEvent } from "react";
 import Image from "next/image";
 import { useNews } from "@/entities/news/model/hooks";
 import { IPost } from "@/entities/news";
+import { toast } from "react-toastify";
 
 interface EditNewsFormProps {
   close: () => void;
@@ -57,8 +58,10 @@ export default function EditNewsForm({ close, item }: EditNewsFormProps) {
       }
 
       await createPost(formData);
+      toast.success("Новость обновлена");
       close();
     } catch (error) {
+      toast.error("Ошибка обновления");
       console.error("Ошибка при создании поста:", error);
     }
   };

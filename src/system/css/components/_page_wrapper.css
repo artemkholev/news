@@ -15,7 +15,7 @@
 
 @media (max-width: 768px) {
   .page_wrapper {
-    grid-template-rows: 100px auto 240px;
+    grid-template-rows: 200px auto 240px;
   }
 }
 

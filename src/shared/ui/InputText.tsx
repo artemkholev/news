@@ -13,6 +13,7 @@ interface CustomInputProps {
   name?: string;
   type?: string;
   multiline?: boolean;
+  disableAutocomplete?: boolean;
 }
 
 const StyledInput = styled(TextField)`
@@ -30,7 +31,7 @@ const StyledInput = styled(TextField)`
   }
 
   &:hover .MuiOutlinedInput-notchedOutline {
-    border-color: #2563EB;
+    border-color: #2563eb;
     border-width: 1px;
   }
 
@@ -39,7 +40,7 @@ const StyledInput = styled(TextField)`
   }
 
   & .Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: #2563EB;
+    border-color: #2563eb;
   }
 
   & .MuiInputLabel-root.Mui-focused {
@@ -60,6 +61,7 @@ const InputText: React.FC<CustomInputProps> = ({
   rows,
   type = "text",
   multiline = false,
+  disableAutocomplete = true,
 }) => {
   return (
     <StyledInput
@@ -74,6 +76,7 @@ const InputText: React.FC<CustomInputProps> = ({
       onChange={onChange}
       error={error}
       helperText={helperText}
+      autoComplete={disableAutocomplete ? 'off' : 'on'}
       fullWidth
     />
   );

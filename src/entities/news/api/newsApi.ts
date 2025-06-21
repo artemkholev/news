@@ -2,20 +2,18 @@ import baseApi from "@/shared/api/requests";
 import { IPost } from "../lib/types";
 import { LIMIT } from "../lib/constants";
 
-export const getPosts = async (page: number, sort: string) => {
+export const getPosts = async (page: number) => {
   try {
     const response = await baseApi.get("/posts", {
       params: {
         _page: page,
         _limit: LIMIT,
-        _sort: sort !== "general" ? sort : undefined,
-        _order: "asc",
       },
     });
 
     return {
       posts: response.data.items,
-      totalCount: response.data.items.total,
+      totalCount: response.data.total,
     };
   } catch (error) {
     throw error;
